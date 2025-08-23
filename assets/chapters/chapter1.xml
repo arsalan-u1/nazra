@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<alphabets>
+    <letter arabic="ا" english="Alif" arabic2="" /> 
+    <letter arabic="ب" english="Ba" arabic2="" />
+    <letter arabic="ت" english="Ta" arabic2="" />
+    <letter arabic="ث" english="Tha" arabic2="" />
+    <letter arabic="ج" english="Jeem" arabic2="" />
+    <letter arabic="ح" english="Haa" arabic2="" />
+    <letter arabic="خ" english="Khaa" arabic2="" />
+    <letter arabic="د" english="Dal" arabic2="" />
+    <letter arabic="ذ" english="Dhal" arabic2="" />
+    <letter arabic="ر" english="Ra" arabic2="" />
+    <letter arabic="ز" english="Zay" arabic2="" />
+    <letter arabic="س" english="Seen" arabic2="" />
+    <letter arabic="ش" english="Sheen" arabic2="" />
+    <letter arabic="ص" english="Sad" arabic2="" />
+    <letter arabic="ض" english="Dad" arabic2="" />
+    <letter arabic="ط" english="Taa" arabic2="" />
+    <letter arabic="ظ" english="Zaa" arabic2="" />
+    <letter arabic="ع" english="Ain" arabic2="" />
+    <letter arabic="غ" english="Ghain" arabic2="" />
+    <letter arabic="ف" english="Fa" arabic2="" />
+    <letter arabic="ق" english="Qaf" arabic2="" />
+    <letter arabic="ك" english="Kaf" arabic2="" />
+    <letter arabic="ل" english="Lam" arabic2="" />
+    <letter arabic="م" english="Meem" arabic2="" />
+    <letter arabic="ن" english="Noon" arabic2="" />
+    <letter arabic="و" english="Waw" arabic2="" />
+    <letter arabic="ه" english="Ha" arabic2="" />
+    <letter arabic="ء" english="Hamza" arabic2="" />
+    <letter arabic="ي" english="Ya" arabic2="" />
+    <letter arabic="یے" english="Ya" arabic2="" />
+</alphabets>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<alphabets>
+    <letter arabic="ا" english="Alif" />
+    <letter arabic="ب" english="Ba" />
+    <letter arabic="ت" english="Ta" />
+    <letter arabic="ث" english="Tha" />
+    <letter arabic="ج" english="Jeem" />
+    <letter arabic="ح" english="Haa" />
+    <letter arabic="خ" english="Khaa" />
+    <letter arabic="د" english="Dal" />
+    <letter arabic="ذ" english="Dhal" />
+    <letter arabic="ر" english="Ra" />
+    <letter arabic="ز" english="Zay" />
+    <letter arabic="س" english="Seen" />
+    <letter arabic="ش" english="Sheen" />
+    <letter arabic="ص" english="Sad" />
+    <letter arabic="ض" english="Dad" />
+    <letter arabic="ط" english="Taa" />
+    <letter arabic="ظ" english="Zaa" />
+    <letter arabic="ع" english="Ain" />
+    <letter arabic="غ" english="Ghain" />
+    <letter arabic="ف" english="Fa" />
+    <letter arabic="ق" english="Qaf" />
+    <letter arabic="ك" english="Kaf" />
+    <letter arabic="ل" english="Lam" />
+    <letter arabic="م" english="Meem" />
+    <letter arabic="ن" english="Noon" />
+    <letter arabic="و" english="Waw" />
+    <letter arabic="ه" english="Ha" />
+    <letter arabic="ء" english="Hamza" />
+    <letter arabic="ي" english="Ya" />
+    <letter arabic="یے" english="Ya" />
+</alphabets>

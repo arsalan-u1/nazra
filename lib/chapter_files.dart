@@ -1,0 +1,18 @@
+const List<String> chapterFiles = [
+  'assets/chapters/chapter1.xml',
+  'assets/chapters/chapter2.xml',
+  'assets/chapters/chapter3.xml',
+  'assets/chapters/chapter4.xml',
+  'assets/chapters/chapter5.xml',
+  'assets/chapters/chapter6.xml',
+  'assets/chapters/chapter7.xml',
+  'assets/chapters/chapter8.xml',
+  'assets/chapters/chapter9.xml',
+  'assets/chapters/chapter10.xml',
+  'assets/chapters/chapter11.xml',
+  'assets/chapters/chapter12.xml',
+  'assets/chapters/chapter13.xml',
+  'assets/chapters/chapter14.xml',
+  'assets/chapters/chapter15.xml',
+  'assets/chapters/chapter16.xml',
+];

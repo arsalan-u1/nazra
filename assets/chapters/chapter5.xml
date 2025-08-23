@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<alphabets>
+    <letter arabic="رُسُلُ" arabic2="ر بيش رُ ,, س بيش سُ ,, رُسُ ,, ل بيش لُ ,, رُسُلُ " english="" />
+    <letter arabic="سُدُسُ" arabic2="س بيش سُ ,, د بيش دُ ,, سُدُ ,, س بيش سُ ,, سُدُسُ " english="" />
+    <letter arabic="فُقِدَ" arabic2="ف بيش فُ ,, ق زير قِ ,, فُقِ ,, د زَبَرْ دَ ,, فُقِدَ " english="" />
+    <letter arabic="قُتِلَ" arabic2="ق بيش قُ ,, ت زير تِ ,, قُتِ ,, ل زَبَرْ لَ ,, قُتِلَ " english="" />
+    <letter arabic="نُكِسَ" arabic2="ن بيش نُ ,, ك زير كِ ,, نُكِ ,, س زَبَرْ سَ ,, نُكِسَ " english="" />
+    <letter arabic="كَرُمَ" arabic2="ك زَبَرْ كَ ,, ر بيش رُ ,,  كَرُ ,, م زَبَرْ مَ ,, كَرُمَ" english="" />
+    <letter arabic="عُلِمَ" arabic2="ع بيش عُ ,, ل زير لِ ,, عُلِ ,, م زَبَرْ مَ ,, عُلِمَ " english="" />
+    <letter arabic="هُدِىَ" arabic2="ه بيش هُ ,, د زير دِ ,, هُدِ ,, ي زَبَرْ يَ ,, هُدِىَ " english="" />
+    <letter arabic="وُسِعَ" arabic2="" english="" />
+</alphabets>

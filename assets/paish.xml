@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<alphabets>
+    <letter arabic="اُ" arabic2="ا بيش اُ" />
+    <letter arabic="بُ" arabic2="ب بيش بُ" />
+    <letter arabic="تُ" arabic2="ت بيش تُ" />
+    <letter arabic="ثُ" arabic2="ث بيش ثُ" />
+    <letter arabic="جُ" arabic2="ج بيش جُ" />
+    <letter arabic="حُ" arabic2="ح بيش حُ" />
+    <letter arabic="خُ" arabic2="خ بيش خُ" />
+    <letter arabic="دُ" arabic2="د بيش دُ" />
+    <letter arabic="رُ" arabic2="ر بيش رُ" />
+    <letter arabic="زُ" arabic2="ز بيش زُ" />
+    <letter arabic="سُ" arabic2="س بيش سُ" />
+    <letter arabic="شُ" arabic2="ش بيش شُ" />
+    <letter arabic="صُ" arabic2="ص بيش صُ" />
+    <letter arabic="ضُ" arabic2="ض بيش ضُ" />
+    <letter arabic="طُ" arabic2="ط بيش طُ" />
+    <letter arabic="ظُ" arabic2="ظ بيش ظُ" />
+    <letter arabic="عُ" arabic2="ع بيش عُ" />
+    <letter arabic="غُ" arabic2="غ بيش غُ" />
+    <letter arabic="فُ" arabic2="ف بيش فُ" />
+    <letter arabic="قُ" arabic2="ق بيش قُ" />
+    <letter arabic="كُ" arabic2="ك بيش كُ" />
+    <letter arabic="لُ" arabic2="ل بيش لُ" />
+    <letter arabic="مُ" arabic2="م بيش مُ" />
+    <letter arabic="نُ" arabic2="ن بيش نُ" />
+    <letter arabic="وُ" arabic2="و بيش وُ" />
+    <letter arabic="هُ" arabic2="ه بيش هُ" />
+    <letter arabic="ءُ" arabic2="ء بيش ءُ" />
+    <letter arabic="يُ" arabic2="ي بيش يُ" />
+</alphabets>

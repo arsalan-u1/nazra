@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<alphabets>
+    <letter arabic="ا" arabic2="ا" english="" />
+    <letter arabic="ل" arabic2="ل" english="" />
+    <letter arabic="لا" arabic2="ل  ا" english="" />
+    <letter arabic="جا" arabic2="ج  ا" english="" />
+    <letter arabic="ما" arabic2="م  ا" english="" />
+    <letter arabic="با" arabic2="ب  ا" english="" />
+    <letter arabic="لج" arabic2="ل   ج" english="" />
+    <letter arabic="لب" arabic2="ل  ب" english="" />
+    <letter arabic="بلب" arabic2="ب  ل  ب" english="" />
+    <letter arabic="ك" arabic2="ك" english="" />
+    <letter arabic="كا" arabic2="ك  ا" english="" />
+    <letter arabic="كب" arabic2="ك  ب" english="" />
+    <letter arabic="كت" arabic2="ك  ت" english="" />
+    <letter arabic="لج" arabic2="ل  ج" english="" />
+    <letter arabic="بكت" arabic2="ب  ك  ت" english="" />
+    <letter arabic="تكت" arabic2="ت  ك  ت" english="" />
+    <letter arabic="ب" arabic2="ب" english="" />
+    <letter arabic="ت" arabic2="ت" english="" />
+    <letter arabic="ث" arabic2="ث" english="" />
+    <letter arabic="ن" arabic2="ن" english="" />
+    <letter arabic="ى" arabic2="ي" english="" />
+    <letter arabic="با" arabic2="ب   ا" english="" />
+    <letter arabic="" arabic2="" english="" />
+    <letter arabic="تا" arabic2="ت  ا" english="" />
+    <letter arabic="ثا" arabic2="ث  ا" english="" />
+    <letter arabic="نا" arabic2="ن  ا" english="" />
+    <letter arabic="يا" arabic2="ي  ا" english="" />
+    <letter arabic="بس" arabic2="ب  س" english="" />
+    <letter arabic="نس" arabic2="ن  س" english="" />
+    <letter arabic="تس" arabic2="ت  س" english="" />
+    <letter arabic="ثس" arabic2="ث  س" english="" />
+    <letter arabic="بى" arabic2="ب  ي" english="" />
+    <letter arabic="ثج" arabic2="ث  ج" english="" />
+    <letter arabic="تح" arabic2="ت  ح" english="" />
+    <letter arabic="نخ" arabic2="ن  خ" english="" />
+    <letter arabic="يح" arabic2="ي  ح" english="" />
+    <letter arabic="بج" arabic2="ب  ج" english="" />
+    <letter arabic="نبل" arabic2="ن  ب  ل" english="" />
+    <letter arabic="تنل" arabic2="ت  ن  ل" english="" />
+    <letter arabic="بيل" arabic2="ب  ي  ل" english="" />
+    <letter arabic="ثثل" arabic2="ث  ث  ل" english="" />
+    <letter arabic="نبن" arabic2="ن  ب  ن" english="" />
+    <letter arabic="بنن" arabic2="ب  ن  ن" english="" />
+    <letter arabic="تين" arabic2="ت  ي  ن" english="" />
+    <letter arabic="تحت" arabic2="ت  ح  ت" english="" />
+    <letter arabic="يجب" arabic2="ي  ج  ب" english="" />
+    <letter arabic="صحب" arabic2="ص  ح  ب" english="" />
+</alphabets>
