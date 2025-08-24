@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:xml/xml.dart' as xml;
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class ChapterDetailScreen extends StatefulWidget {
-  final String filePath; // The XML file to load
+  final String filePath; // The XML file to load (can be asset or URL)
 
   const ChapterDetailScreen({super.key, required this.filePath});
 
@@ -20,35 +22,43 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _setTtsSettings();
+    _initializeTts();
     _loadFromXml(widget.filePath);
   }
 
-  Future<void> _setTtsSettings() async {
-    //await flutterTts.setPitch(1.0);
-   // await flutterTts.setSpeechRate(0.2);
+  Future<void> _initializeTts() async {
     await flutterTts.setLanguage("ar");
-    // Set a default engine
     await flutterTts.setEngine("com.google.android.tts");
-    // Set a voice (if needed)
     await flutterTts.setVoice({"name": "ar-xa-x-arz-local", "locale": "ar"});
-    await flutterTts.awaitSpeakCompletion(true); // Ensure TTS waits for speech completion
-
-
+    await flutterTts.awaitSpeakCompletion(true);
     await flutterTts.setPitch(1.0);
     await flutterTts.setSpeechRate(0.5);
   }
 
-  Future<void> _speak(String text, {String language = "ar"}) async {
-    await flutterTts.setLanguage(language);
+  Future<void> _speak(String text) async {
+    if (text.trim().isEmpty) return;
+    await flutterTts.stop();
     await flutterTts.speak(text);
   }
 
   Future<void> _loadFromXml(String path) async {
     try {
-      String xmlString = await rootBundle.loadString(path);
-      var document = xml.XmlDocument.parse(xmlString);
+      String xmlString;
 
+      if (path.startsWith('http')) {
+        // Load XML from the web
+        final response = await http.get(Uri.parse(path));
+        if (response.statusCode == 200) {
+          xmlString = utf8.decode(response.bodyBytes);
+        } else {
+          throw Exception("Failed to load XML from web");
+        }
+      } else {
+        // Load XML from local assets
+        xmlString = await rootBundle.loadString(path);
+      }
+
+      var document = xml.XmlDocument.parse(xmlString);
       setState(() {
         alphabets = document.findAllElements('letter').map((node) {
           return {
@@ -60,7 +70,7 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
         isLoading = false;
       });
     } catch (e) {
-      print("Error loading XML: $e");
+      debugPrint("Error loading XML: $e");
       setState(() => isLoading = false);
     }
   }
@@ -84,22 +94,22 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
           textDirection: TextDirection.rtl,
           child: GridView.builder(
             itemCount: alphabets.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate:
+            const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
             itemBuilder: (context, index) {
+              final letter = alphabets[index];
               return AlphabetTile(
-                arabicLetter: alphabets[index]["arabic"]!,
-                englishCaption: alphabets[index]["english"]!,
-                //onTap: () => _speak(alphabets[index]["arabic2"]!, language: "ar"),
+                arabicLetter: letter["arabic"]!,
+                englishCaption: letter["english"] ?? "",
                 onTap: () => _speak(
-                  (alphabets[index]["arabic2"]?.isNotEmpty ?? false)
-                      ? alphabets[index]["arabic2"]!
-                      : alphabets[index]["arabic"]!,
-                  language: "ar",
-                )
+                  (letter["arabic2"]?.isNotEmpty ?? false)
+                      ? letter["arabic2"]!
+                      : letter["arabic"]!,
+                ),
               );
             },
           ),
@@ -107,12 +117,18 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    flutterTts.stop();
+    super.dispose();
+  }
 }
 
 class AlphabetTile extends StatefulWidget {
   final String arabicLetter;
   final String englishCaption;
-  final Function onTap;
+  final Future<void> Function() onTap;
 
   const AlphabetTile({
     super.key,

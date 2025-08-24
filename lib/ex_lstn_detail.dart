@@ -5,7 +5,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'dart:math';
 
 class ExLstnDetail extends StatefulWidget {
-  final String filePath; // 👈 passed from previous screen
+  final String filePath; // passed from previous screen
 
   const ExLstnDetail({super.key, required this.filePath});
 
@@ -27,7 +27,7 @@ class _ExLstnDetailState extends State<ExLstnDetail> {
   @override
   void initState() {
     super.initState();
-    _loadAlphabetsFromXml(widget.filePath); // 👈 use file passed from previous screen
+    _loadAlphabetsFromXml(widget.filePath);
   }
 
   Future<void> _loadAlphabetsFromXml(String xmlPath) async {
@@ -36,6 +36,7 @@ class _ExLstnDetailState extends State<ExLstnDetail> {
     try {
       String xmlString = await rootBundle.loadString(xmlPath);
       var document = xml.XmlDocument.parse(xmlString);
+      if (!mounted) return; // Ensure widget is still in tree
       setState(() {
         alphabets = document.findAllElements('letter').map((node) {
           return {
@@ -74,42 +75,43 @@ class _ExLstnDetailState extends State<ExLstnDetail> {
     });
   }
 
-  void _speakAgain() async {
-    await flutterTts.setLanguage("ar");
-    await flutterTts.awaitSpeakCompletion(true);
-    await flutterTts.speak(correctLetter);
+  Future<void> _speakAgain() async {
+    await _safeSpeak(correctLetter, lang: "ar");
   }
 
   Future<void> _speak(String text) async {
-    await flutterTts.setLanguage("ar");
+    await _safeSpeak(text, lang: "ar");
+  }
+
+  /// Safe method to call TTS with mounted guard
+  Future<void> _safeSpeak(String text, {String lang = "ar"}) async {
+    if (!mounted) return;
+    await flutterTts.setLanguage(lang);
+    await flutterTts.awaitSpeakCompletion(true);
+    if (!mounted) return; // check again before speaking
     await flutterTts.speak(text);
   }
 
   void _checkAnswer(String selectedLetter, int index) async {
     bool isCorrect = selectedLetter == correctLetter;
 
+    if (!mounted) return;
     setState(() {
       animatedBoxColors[index] = isCorrect ? Colors.green : Colors.redAccent;
       feedbackMessage = isCorrect ? "أحسنت!" : "حاول مرة أخرى";
       feedbackColor = isCorrect ? Colors.green : Colors.red;
     });
 
-    await flutterTts.setLanguage("ar");
-    await flutterTts.awaitSpeakCompletion(true);
-    await flutterTts.speak(feedbackMessage);
-
-    await flutterTts.setLanguage("en-US");
-    await flutterTts.awaitSpeakCompletion(true);
-    await Future.delayed(const Duration(milliseconds: 200));
-    await flutterTts.speak(isCorrect ? "Well Done" : "Try again");
+    // Speak feedback safely with mounted guard
+    await _safeSpeak(feedbackMessage, lang: "ar");
+    await _safeSpeak(isCorrect ? "Well Done" : "Try again", lang: "en-US");
 
     if (!isCorrect) {
-      await flutterTts.setLanguage("ar");
-      await flutterTts.awaitSpeakCompletion(true);
-      await flutterTts.speak(correctLetter);
+      await _safeSpeak(correctLetter, lang: "ar");
     }
 
     Future.delayed(const Duration(seconds: 1), () {
+      if (!mounted) return;
       setState(() {
         animatedBoxColors[index] = Colors.blue.shade200;
       });
@@ -117,7 +119,7 @@ class _ExLstnDetailState extends State<ExLstnDetail> {
 
     if (isCorrect) {
       await Future.delayed(const Duration(seconds: 1));
-      _setNewQuestion();
+      if (mounted) _setNewQuestion();
     }
   }
 
@@ -125,7 +127,7 @@ class _ExLstnDetailState extends State<ExLstnDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.filePath.split('/').last), // 👈 Show filename
+        title: Text(widget.filePath.split('/').last),
         centerTitle: true,
       ),
       body: Padding(
@@ -163,15 +165,19 @@ class _ExLstnDetailState extends State<ExLstnDetail> {
                     },
                     onTapUp: (_) {
                       Future.delayed(const Duration(milliseconds: 150), () {
-                        setState(() {
-                          pressedIndices.remove(index);
-                        });
+                        if (mounted) {
+                          setState(() {
+                            pressedIndices.remove(index);
+                          });
+                        }
                       });
                     },
                     onTapCancel: () {
-                      setState(() {
-                        pressedIndices.remove(index);
-                      });
+                      if (mounted) {
+                        setState(() {
+                          pressedIndices.remove(index);
+                        });
+                      }
                     },
                     onTap: () => _checkAnswer(arabicLetter, index),
                     child: AnimatedContainer(
@@ -218,5 +224,11 @@ class _ExLstnDetailState extends State<ExLstnDetail> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    flutterTts.stop(); // stop speaking before plugin is released
+    super.dispose();
   }
 }

@@ -11,28 +11,30 @@ class ArabicSpeakingCheck extends StatefulWidget {
   const ArabicSpeakingCheck({super.key, required this.xmlFilePath});
 
   @override
-  _ArabicSpeakingCheckState createState() => _ArabicSpeakingCheckState();
+  State<ArabicSpeakingCheck> createState() => _ArabicSpeakingCheckState();
 }
 
 class _ArabicSpeakingCheckState extends State<ArabicSpeakingCheck> {
   final FlutterTts flutterTts = FlutterTts();
   final stt.SpeechToText speech = stt.SpeechToText();
+
   String displayedArabic = "";
-  //String chkArabic = "";
   String userSpoken = "";
   String feedback = "";
   Color feedbackColor = Colors.transparent;
 
-  late stt.SpeechToText _speech;
-  bool _isListening = false;
-  String _text = 'Tap the mic to start listening...';
+  bool isListening = false;
 
   @override
   void initState() {
     super.initState();
     _loadXmlAndPickRandomText();
-    //_initSpeech();
-    _speech = stt.SpeechToText();
+    _initTts();
+  }
+
+  Future<void> _initTts() async {
+    await flutterTts.setLanguage("ar");
+    await flutterTts.awaitSpeakCompletion(true);
   }
 
   Future<void> _loadXmlAndPickRandomText() async {
@@ -46,88 +48,32 @@ class _ArabicSpeakingCheckState extends State<ArabicSpeakingCheck> {
       final randomLetter = letters[Random().nextInt(letters.length)];
       setState(() {
         displayedArabic = randomLetter.getAttribute('arabic2') ?? '';
+        userSpoken = '';
         feedback = '';
         feedbackColor = Colors.transparent;
       });
-
-      await flutterTts.setLanguage("ar");
-      //await flutterTts.speak(displayedArabic);
-
     } catch (e) {
-      print("Error loading or parsing XML: $e");
+      debugPrint("Error loading XML: $e");
     }
   }
 
-  /*Future<void> _initSpeech() async {
-    await speech.initialize();
-  }*/
-  void _initSpeech() async {
-    bool available = await speech.initialize();
-    if (available) {
-      var locales = await speech.locales();
+  Future<void> _startListening() async {
+    bool available = await speech.initialize(
+      onStatus: (status) => debugPrint('Speech status: $status'),
+      onError: (error) => debugPrint('Speech error: $error'),
+    );
 
-      for (var locale in locales) {
-        print("Locale: ${locale.localeId} - Name: ${locale.name}");
-      }
-    } else {
-      print("Speech recognition not available.");
+    if (!available) {
+      debugPrint("Speech recognition not available");
+      return;
     }
-  }
- /* void _startListening() async {
+
     setState(() {
+      isListening = true;
       feedback = '';
       feedbackColor = Colors.transparent;
     });
 
-    await speech.listen(
-      localeId: 'ar_SA',
-      onResult: (result) {
-        setState(() {
-          userSpoken = result.recognizedWords.trim();
-          bool isCorrect = userSpoken == displayedArabic;
-
-          feedback = isCorrect ? "أحسنت!" : "حاول مرة أخرى";
-          feedbackColor = isCorrect ? Colors.green : Colors.red;
-
-          flutterTts.setLanguage(isCorrect ? "en-US" : "ar");
-          flutterTts.speak(feedback);
-        });
-      },
-    );
-  }*/
-  void _listen() async {
-    if (!_isListening) {
-      bool available = await _speech.initialize(
-        onStatus: (val) => print('STATUS: $val'),
-        onError: (val) => print('ERROR: $val'),
-      );
-      if (available) {
-        setState(() => _isListening = true);
-        _speech.listen(
-          onResult: (val) => setState(() {
-            _text = val.recognizedWords;
-          }),
-          localeId: 'ar-SA',
-        );
-      }
-    } else {
-      setState(() => _isListening = false);
-      _speech.stop();
-    }
-  }
-
-  void _startListening() async {
-    bool available = await speech.initialize(
-      onStatus: (status) => print('Status: $status'),
-      onError: (error) => print('Error: $error'),
-    );
-
-    if (!available) {
-      print("Speech recognition not available");
-      return;
-    }
-
-    print("Starting to listen...");
     await speech.listen(
       localeId: 'ar-SA',
       onResult: (result) {
@@ -139,19 +85,19 @@ class _ArabicSpeakingCheckState extends State<ArabicSpeakingCheck> {
             feedback = isCorrect ? "أحسنت!" : "حاول مرة أخرى";
             feedbackColor = isCorrect ? Colors.green : Colors.red;
 
-            //flutterTts.setLanguage(isCorrect ? "en-US" : "ar");
             flutterTts.speak(feedback);
           });
         }
       },
     );
   }
-  void _stopListening() async {
+
+  Future<void> _stopListening() async {
     await speech.stop();
+    setState(() => isListening = false);
   }
 
-  void _speakAgain() async {
-    await flutterTts.setLanguage("ar");
+  Future<void> _repeatWord() async {
     await flutterTts.speak(displayedArabic);
   }
 
@@ -159,53 +105,56 @@ class _ArabicSpeakingCheckState extends State<ArabicSpeakingCheck> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Arabic Speaking Check"),
+        title: const Text("Arabic Speaking Check"),
         centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             Text(
               displayedArabic,
-              style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, fontFamily: 'Amiri'),
+              style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, fontFamily: 'Amiri'),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             ElevatedButton(
-              onPressed: _startListening,
-              child: Text("Start Speaking"),
+              onPressed: isListening ? _stopListening : _startListening,
+              child: Text(isListening ? "Stop Listening" : "Start Speaking"),
             ),
-            /*ElevatedButton(
-              onPressed: _stopListening,
-              child: Text("Stop Listening"),
-            ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _speakAgain,
-              child: Text("Repeat Word"),
+              onPressed: _repeatWord,
+              child: const Text("Repeat Word"),
             ),
-            SizedBox(height: 40),*/
+            const SizedBox(height: 20),
             Text(
               "You said: $userSpoken",
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               feedback,
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: feedbackColor),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             ElevatedButton(
               onPressed: _loadXmlAndPickRandomText,
-              child: Text("Next Word"),
+              child: const Text("Next Word"),
             ),
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    flutterTts.stop();
+    speech.stop();
+    super.dispose();
   }
 }
