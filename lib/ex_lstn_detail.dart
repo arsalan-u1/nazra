@@ -3,9 +3,10 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:xml/xml.dart' as xml;
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:math';
+import 'dart:io' show Platform;
 
 class ExLstnDetail extends StatefulWidget {
-  final String filePath; // passed from previous screen
+  final String filePath; // 👈 passed from previous screen
 
   const ExLstnDetail({super.key, required this.filePath});
 
@@ -27,8 +28,60 @@ class _ExLstnDetailState extends State<ExLstnDetail> {
   @override
   void initState() {
     super.initState();
-    _loadAlphabetsFromXml(widget.filePath);
+    _initializeTts();
+    if (Platform.isIOS) {
+      _checkArabicVoice(); // Only runs on iOS
+    }
+    _loadAlphabetsFromXml(widget.filePath); // 👈 use file passed from previous screen
   }
+
+  Future<void> _initializeTts() async {
+    await flutterTts.setLanguage("ar");
+    if (Theme.of(context).platform == TargetPlatform.android) {
+      await flutterTts.setEngine("com.google.android.tts");
+      await flutterTts.setVoice({"name": "ar-xa-x-arz-local", "locale": "ar"});
+    }
+    if (Theme.of(context).platform == TargetPlatform.iOS) {
+      await flutterTts.setSharedInstance(true);
+    }
+    await flutterTts.awaitSpeakCompletion(true);
+    await flutterTts.setPitch(1.0);
+    await flutterTts.setSpeechRate(0.5);
+  }
+  Future<void> _checkArabicVoice() async {
+    final voices = await flutterTts.getVoices;
+    final hasArabic = voices.any((voice) {
+      final locale = voice['locale']?.toString() ?? '';
+      return locale.startsWith('ar'); // detect Arabic voices
+    });
+
+    if (!hasArabic && mounted) {
+      _showArabicVoiceDialog();
+    }
+  }
+  void _showArabicVoiceDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Arabic Voice Not Found"),
+          content: const Text(
+              "To enable Arabic pronunciation:\n\n"
+                  "1. Go to Settings → Accessibility → Spoken Content → Voices.\n"
+                  "2. Tap Arabic and download a voice (e.g., Majed or Tarik).\n\n"
+                  "After downloading, restart the app."
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   Future<void> _loadAlphabetsFromXml(String xmlPath) async {
     await flutterTts.setPitch(1.0);
@@ -36,7 +89,6 @@ class _ExLstnDetailState extends State<ExLstnDetail> {
     try {
       String xmlString = await rootBundle.loadString(xmlPath);
       var document = xml.XmlDocument.parse(xmlString);
-      if (!mounted) return; // Ensure widget is still in tree
       setState(() {
         alphabets = document.findAllElements('letter').map((node) {
           return {
@@ -75,43 +127,42 @@ class _ExLstnDetailState extends State<ExLstnDetail> {
     });
   }
 
-  Future<void> _speakAgain() async {
-    await _safeSpeak(correctLetter, lang: "ar");
+  void _speakAgain() async {
+    await flutterTts.setLanguage("ar");
+    await flutterTts.awaitSpeakCompletion(true);
+    await flutterTts.speak(correctLetter);
   }
 
   Future<void> _speak(String text) async {
-    await _safeSpeak(text, lang: "ar");
-  }
-
-  /// Safe method to call TTS with mounted guard
-  Future<void> _safeSpeak(String text, {String lang = "ar"}) async {
-    if (!mounted) return;
-    await flutterTts.setLanguage(lang);
-    await flutterTts.awaitSpeakCompletion(true);
-    if (!mounted) return; // check again before speaking
+    await flutterTts.setLanguage("ar");
     await flutterTts.speak(text);
   }
 
   void _checkAnswer(String selectedLetter, int index) async {
     bool isCorrect = selectedLetter == correctLetter;
 
-    if (!mounted) return;
     setState(() {
       animatedBoxColors[index] = isCorrect ? Colors.green : Colors.redAccent;
       feedbackMessage = isCorrect ? "أحسنت!" : "حاول مرة أخرى";
       feedbackColor = isCorrect ? Colors.green : Colors.red;
     });
 
-    // Speak feedback safely with mounted guard
-    await _safeSpeak(feedbackMessage, lang: "ar");
-    await _safeSpeak(isCorrect ? "Well Done" : "Try again", lang: "en-US");
+    await flutterTts.setLanguage("ar");
+    await flutterTts.awaitSpeakCompletion(true);
+    await flutterTts.speak(feedbackMessage);
+
+    await flutterTts.setLanguage("en-US");
+    await flutterTts.awaitSpeakCompletion(true);
+    await Future.delayed(const Duration(milliseconds: 200));
+    await flutterTts.speak(isCorrect ? "Well Done" : "Try again");
 
     if (!isCorrect) {
-      await _safeSpeak(correctLetter, lang: "ar");
+      await flutterTts.setLanguage("ar");
+      await flutterTts.awaitSpeakCompletion(true);
+      await flutterTts.speak(correctLetter);
     }
 
     Future.delayed(const Duration(seconds: 1), () {
-      if (!mounted) return;
       setState(() {
         animatedBoxColors[index] = Colors.blue.shade200;
       });
@@ -119,7 +170,7 @@ class _ExLstnDetailState extends State<ExLstnDetail> {
 
     if (isCorrect) {
       await Future.delayed(const Duration(seconds: 1));
-      if (mounted) _setNewQuestion();
+      _setNewQuestion();
     }
   }
 
@@ -127,7 +178,7 @@ class _ExLstnDetailState extends State<ExLstnDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.filePath.split('/').last),
+        title: Text(widget.filePath.split('/').last), // 👈 Show filename
         centerTitle: true,
       ),
       body: Padding(
@@ -165,19 +216,15 @@ class _ExLstnDetailState extends State<ExLstnDetail> {
                     },
                     onTapUp: (_) {
                       Future.delayed(const Duration(milliseconds: 150), () {
-                        if (mounted) {
-                          setState(() {
-                            pressedIndices.remove(index);
-                          });
-                        }
-                      });
-                    },
-                    onTapCancel: () {
-                      if (mounted) {
                         setState(() {
                           pressedIndices.remove(index);
                         });
-                      }
+                      });
+                    },
+                    onTapCancel: () {
+                      setState(() {
+                        pressedIndices.remove(index);
+                      });
                     },
                     onTap: () => _checkAnswer(arabicLetter, index),
                     child: AnimatedContainer(
@@ -225,7 +272,6 @@ class _ExLstnDetailState extends State<ExLstnDetail> {
       ),
     );
   }
-
   @override
   void dispose() {
     flutterTts.stop(); // stop speaking before plugin is released
