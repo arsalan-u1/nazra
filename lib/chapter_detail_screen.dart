@@ -41,6 +41,7 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
       _showArabicVoiceDialog();
     }
   }
+
   void _showArabicVoiceDialog() {
     showDialog(
       context: context,
@@ -51,8 +52,7 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
               "To enable Arabic pronunciation:\n\n"
                   "1. Go to Settings → Accessibility → Spoken Content → Voices.\n"
                   "2. Tap Arabic and download a voice (e.g., Majed or Tarik).\n\n"
-                  "After downloading, restart the app."
-          ),
+                  "After downloading, restart the app."),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -63,27 +63,39 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
       },
     );
   }
-  /*Future<void> _initializeTts() async {
-    await flutterTts.setLanguage("ar");
-    await flutterTts.setEngine("com.google.android.tts");
-    await flutterTts.setVoice({"name": "ar-xa-x-arz-local", "locale": "ar"});
-    await flutterTts.awaitSpeakCompletion(true);
-    await flutterTts.setPitch(1.0);
-    await flutterTts.setSpeechRate(0.5);
-  }*/
+
   Future<void> _initializeTts() async {
     await flutterTts.setLanguage("ar");
-    if (Theme.of(context).platform == TargetPlatform.android) {
+
+    if (Platform.isAndroid) {
       await flutterTts.setEngine("com.google.android.tts");
       await flutterTts.setVoice({"name": "ar-xa-x-arz-local", "locale": "ar"});
     }
-    if (Theme.of(context).platform == TargetPlatform.iOS) {
+
+    if (Platform.isIOS) {
       await flutterTts.setSharedInstance(true);
+
+      final voices = await flutterTts.getVoices;
+      if (voices is List) {
+        final arabicVoice = voices.firstWhere(
+              (v) => (v['locale'] as String).toLowerCase().startsWith('ar'),
+          orElse: () => {},
+        );
+
+        if (arabicVoice.isNotEmpty) {
+          await flutterTts.setVoice({
+            "name": arabicVoice['name'],
+            "locale": arabicVoice['locale'],
+          });
+        }
+      }
     }
+
     await flutterTts.awaitSpeakCompletion(true);
     await flutterTts.setPitch(1.0);
     await flutterTts.setSpeechRate(0.5);
   }
+
   Future<void> _speak(String text) async {
     if (text.trim().isEmpty) return;
     await flutterTts.stop();
